@@ -28,6 +28,8 @@ class ClasificadorIntencion:
         # Procesar la respuesta y crear el diccionario
         diccionario = self._procesar_respuesta(respuesta_clasificar, mensaje_lower, clasificaciones_posibles)
 
+        # print(diccionario)
+
         return diccionario
 
     def _crear_prompt_clasificacion(self, mensaje: str, clasificaciones_posibles: list) -> str:
@@ -71,7 +73,7 @@ class ClasificadorIntencion:
             # Intentar parsear la respuesta como JSON
             respuesta_json = self._extraer_json_de_respuesta(respuesta_llm)
 
-            # print(respuesta_json.get("razonamiento", ""))
+            # print(respuesta_json)
             
             if respuesta_json and "intencion" in respuesta_json:
                 intencion = respuesta_json["intencion"].lower()

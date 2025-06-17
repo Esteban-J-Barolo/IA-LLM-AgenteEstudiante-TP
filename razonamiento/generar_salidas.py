@@ -12,9 +12,9 @@ class Respuestas():
         respuesta = ''
 
         if self.intencion.get("intencion") == 'resumen':
-            print(self.intencion)
-            print('-'*40)
-            print(self.intencion.get("contenido"))
+            # print(self.intencion)
+            # print('-'*40)
+            # print(self.intencion.get("contenido"))
             prompt = self._crear_prompt_resumen(self.intencion.get("contenido"))
             llm = Llm()
             respuesta = llm.enviar_mensaje(prompt)
@@ -58,7 +58,8 @@ class Respuestas():
         - Usa un lenguaje claro y conciso
         - Preserva el tono y contexto del contenido original
         - No agregues información que no esté en el texto original
-        - El resumen debe ser autocontenido y comprensible sin el texto original"""
+        - El resumen debe ser autocontenido y comprensible sin el texto original
+        - Solo debes responder el JSON"""
 
         return prompt
 
