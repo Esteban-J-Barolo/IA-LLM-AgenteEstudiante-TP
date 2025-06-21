@@ -6,12 +6,12 @@ def crear_archivos_materia(ruta_vault: str, nombre_materia: str):
     carpeta_materias = base / "Materias"
     carpeta_materia = carpeta_materias / nombre_materia
 
-    editar_materias(carpeta_materias / "materias.md", nombre_materia)
-
-    carpetas = ["Teoria", "Practica", "TPs", "Examenes", "Notas"]
+    carpetas = ["Teoria", "Practica", "TPs", "Examenes", "Notas", "Archivos"]
 
     # Crear carpeta principal de la materia
     carpeta_materia.mkdir(parents=True, exist_ok=True)
+
+    editar_materias(carpeta_materias / "materias.md", nombre_materia)
 
     index_path_index = carpeta_materia / f"index_{nombre_materia}.md"
     if not index_path_index.exists():
@@ -22,7 +22,21 @@ def crear_archivos_materia(ruta_vault: str, nombre_materia: str):
         (carpeta_materia / carpeta).mkdir(parents=True, exist_ok=True)
 
 def estruc_index(nombre_materia: str) -> str:
-    return f"# 📘 {nombre_materia}\n\n## Teoría\n\n## Práctica\n\n## TPs\n\n## Exámenes\n\n[[Materias|⬅️ Volver a materias]]\n"
+    md_materia = f"""# 📘 {nombre_materia}\n
+---## Agente\n\n### Teoría\n\n### Práctica\n\n### TPs\n\n### Exámenes\n
+---
+## Estudiante\n\n### Notas\n
+- 
+\n### Resúmenes\n
+- \n
+```button
+name ✍️ Crear nuevas nota del estudiante
+type command
+action Templater: Open insert template modal 
+```
+\n## *[[Materias|⬅️ Volver a materias]]*\n
+"""
+    return md_materia
 
 def editar_materias(index_path: Path, nombre_materia: str):
 

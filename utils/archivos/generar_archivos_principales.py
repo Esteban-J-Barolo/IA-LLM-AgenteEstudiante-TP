@@ -1,12 +1,7 @@
 from pathlib import Path
 from typing import List
-from config.configuraciones import cargar_config
 
-def inicializar_archivos():
-
-    conf = cargar_config()
-
-    ruta_vault = conf["vault_path"]
+def inicializar_archivos(ruta_vault: str):
     
     base = Path(ruta_vault).expanduser().resolve()
 
@@ -25,12 +20,11 @@ def inicializar_archivos():
                 f.write(estruc(materia, archivos))
 
 def estruc_index() -> str:
-    return """
-# 📘 Bienvenido a tu Vault académico\n\nDesde aquí podés navegar todas tus materias y secciones.\n\n
+    return """# 📘 Bienvenido a tu Vault académico\n\nDesde aquí podés navegar todas tus materias y secciones.\n
 ## [[Materias]] \n
 ## [[Perfil]] \n
 ## [[Progreso]] \n
-## [[Sistema]] \n
+## [[Sistema]]
 """
 def estruc(materia: str, archivos: List[str]) -> str:
     estructuras = {
@@ -46,13 +40,13 @@ def estruc(materia: str, archivos: List[str]) -> str:
         return ""
     
 def estruc_materias() -> str:
-    return "# **Materias**\n\n[[index|Volver]]"
+    return "# **Materias**\n\n*[[index|Volver]]*"
 
 def estruc_perfil() -> str:
-    return "[[index|Volver]]"
+    return "*[[index|Volver]]*\n"
 
 def estruc_progreso() -> str:
-    return "[[index|Volver]]"
+    return "*[[index|Volver]]*\n"
 
 def estruc_sistema() -> str:
-    return "[[index|Volver]]"
+    return "*[[index|Volver]]*\n"

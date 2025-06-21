@@ -6,7 +6,7 @@ class Llm:
     def __init__(self):
         self.modelo = 'nvidia/llama-3.3-nemotron-super-49b-v1:free'
         self.temperature = 0.7
-        self.API_KEY = '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'
+        self.API_KEY = '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'
         self.url = "https://openrouter.ai/api/v1/chat/completions"
         # self.client = OpenAI(
         #     base_url="https://openrouter.ai/api/v1",

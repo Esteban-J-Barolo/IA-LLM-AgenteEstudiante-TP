@@ -1,6 +1,6 @@
 import streamlit as st
 
-from vistas import vista_inicio, vista_perfil, vista_materia
+from vistas import vista_inicio, vista_perfil
 st.set_page_config(layout="wide")
 
 st.title("Agente de estudio")
@@ -12,5 +12,3 @@ if st.session_state.vista == "inicio":
     vista_inicio.mostrar()
 elif st.session_state.vista == "perfil":
     vista_perfil.mostrar()
-elif st.session_state.vista == "materia":
-    vista_materia.mostrar()
