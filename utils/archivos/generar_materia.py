@@ -23,7 +23,7 @@ def crear_archivos_materia(ruta_vault: str, nombre_materia: str):
 
 def estruc_index(nombre_materia: str) -> str:
     md_materia = f"""# 📘 {nombre_materia}\n
----## Agente\n\n### Teoría\n\n### Práctica\n\n### TPs\n\n### Exámenes\n
+---\n## Agente\n\n### Teoría\n\n### Práctica\n\n### TPs\n\n### Exámenes\n
 ---
 ## Estudiante\n\n### Notas\n
 - 

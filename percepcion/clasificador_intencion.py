@@ -16,7 +16,7 @@ def clasificar(mensaje: str) -> Dict:
 
     # Crear el prompt estructurado
     prompt_clasificar = _crear_prompt_clasificacion(mensaje_lower, clasificaciones_posibles)
-
+    print("\n"+"-"*40+"\nPrompt para resumen\n"+prompt_clasificar, end="\n")
     # Aquí llamarías a tu API de LLM
     respuesta_clasificar = _llamar_llm(prompt_clasificar)
 
@@ -33,21 +33,36 @@ def _crear_prompt_clasificacion(mensaje: str, clasificaciones_posibles: list) ->
     clasificaciones_str = ", ".join([f"'{c}'" for c in clasificaciones_posibles])
     
     prompt = f"""Analiza el siguiente mensaje y clasifícalo en una de estas categorías:
-                {clasificaciones_str}
+{clasificaciones_str}
 
-                Mensaje a clasificar: "{mensaje}"
+Mensaje a clasificar: "{mensaje}"
 
-                Responde ÚNICAMENTE con un JSON en el siguiente formato:
-                {{
-                    "intencion": "categoria_elegida",
-                    "tema": "tema académico principal mencionado, si lo hay"
-                    "confianza": número entre 0 y 1 que represente cuán seguro estás (por ejemplo: 0.95),
-                    "razonamiento": "breve explicación de por qué clasificaste el mensaje de esa forma",
-                    "contenido": "Generar un contenido de 200 palabras si la intención es resumir, en otro caso dejar sin nada"
-                }}
+Responde ÚNICAMENTE con un JSON en el siguiente formato:
+{{
+    “intencion": "una de las categorías listadas exactamente como aparece arriba",
+    “contexto": "descripción breve (1-2 frases) del objetivo del mensaje"
+    "tema": "Una frase que indique claramente el tema principal tratado"
+    "preguntas": [
+        "Pregunta 1 generada por el modelo",
+        "Pregunta 2 generada por el modelo",
+        "Pregunta 3 generada por el modelo"
+    ]
+}}
 
-                Asegúrate de que la "intencion" sea exactamente una de las categorías listadas arriba.
-                En el campo "contenido", usa \\n en vez de saltos de línea y escapá todas las comillas dobles. O bien, devolvé el contenido como una lista de strings línea por línea."""
+Reglas importantes:
+No incluyas ningún texto adicional fuera del JSON.
+Asegúrate de que la "intencion" debe coincidir exactamente con una de las categorías listadas arriba.
+Usa \\n para representar saltos de línea dentro de strings si fuera necesario.
+Escapa las comillas dobles (") dentro del contenido.
+
+Instrucciones para generar las preguntas:
+En la sección "preguntas", generá tres preguntas reflexivas que ayuden a:
+Identificar el conocimiento o información necesaria para lograr el objetivo del mensaje.
+Profundizar en lo que se debe incluir o tener en cuenta antes de resolver la tarea.
+Planificar o elegir el mejor enfoque para desarrollar la tarea correctamente.
+Las preguntas deben estar orientadas a que otro modelo (u otro paso) pueda responderlas y así prepararse mejor para ejecutar la tarea.
+No deben referirse al formato, longitud o estilo del resultado final. Solo deben centrarse en el contenido necesario y la estrategia para abordarlo.
+"""
     
     return prompt
 
@@ -75,13 +90,7 @@ def _procesar_respuesta(respuesta_llm: str, mensaje_original: str, clasificacion
             
             # Validar que la intención esté en las clasificaciones posibles
             if intencion in clasificaciones_posibles:
-                diccionario = {
-                    "intencion": intencion,
-                    "tema": respuesta_json.get("tema", ""),
-                    "confianza": respuesta_json.get("confianza", 0.0),
-                    "razonamiento": respuesta_json.get("razonamiento", ""),
-                    "contenido": respuesta_json.get("contenido", "")
-                }
+                diccionario = respuesta_json
             else:
                 # Si la intención no es válida, usar 'ninguno'
                 diccionario = {

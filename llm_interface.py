@@ -6,7 +6,7 @@ class Llm:
     def __init__(self):
         self.modelo = 'nvidia/llama-3.3-nemotron-super-49b-v1:free'
         self.temperature = 0.7
-        self.API_KEY = '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'
+        self.API_KEY = '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' # https://openrouter.ai/settings/keys
         self.url = "https://openrouter.ai/api/v1/chat/completions"
         # self.client = OpenAI(
         #     base_url="https://openrouter.ai/api/v1",
@@ -29,6 +29,7 @@ class Llm:
         data = {
             "model": self.modelo,
             "messages": [
+                {"role": "system", "content": "Eres un profesor universitario experto que explica de forma clara y resumida el contenido de textos académicos. Tu tarea es leer un texto en español y generar un resumen claro, conciso y en español para estudiantes."},
                 {"role": "user", "content": prompt}
             ],
             "temperature": self.temperature

@@ -1,0 +1,8 @@
+Machine Learning es un subcampo de la inteligencia artificial.
+            Se basa en algoritmos que pueden aprender patrones de los datos
+            sin ser programados explícitamente para cada tarea específica.
+            
+            Existen tres tipos principales:
+            1. Aprendizaje supervisado
+            2. Aprendizaje no supervisado  
+            3. Aprendizaje por refuerzo

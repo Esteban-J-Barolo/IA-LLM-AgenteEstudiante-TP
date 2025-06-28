@@ -14,7 +14,7 @@ def crear_vault(path_str: str):
     # Crear los archivos principales
     inicializar_archivos(path_str)
 
-    crear_plantilla(path_str)
+    crear_las_plantillas(path_str)
 
 
 def crear_plantilla(vault_path: str, nombre_archivo: str, contenido: str, carpeta_plantillas: str = "Plantillas", terminacion_archivo: str = "md"):

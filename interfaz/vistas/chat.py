@@ -6,7 +6,6 @@ from streamlit.components.v1 import html as components_html
 # Agregar la ruta padre al path para importar main.py
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from main import procesar_interaccion
 from utils.Chats.gestionar_chat import cargar_chat, guardar_chat
 
 def render_chat():
@@ -85,7 +84,7 @@ def render_chat():
             try:
                 # Mostrar mensaje de procesamiento
                 with st.spinner("🤖 El agente está pensando..."):
-                    resultado = procesar_interaccion(user_input.strip())
+                    resultado = st.session_state.agente.procesar_interaccion(user_input.strip(), st.session_state.get("materia_seleccionada"), st.session_state.path_vault)
 
                 # Agregar mensajes al chat
                 st.session_state.chat.append({
@@ -109,7 +108,7 @@ def render_chat():
                 st.rerun()
 
             except Exception as e:
-                st.error(f"❌ Error al procesar el mensaje: {str(e)}")
+                st.error(f"❌ Error al procesar el mensaje: {type(e).__name__}: {e}")
                 with st.expander("Ver detalles del error"):
                     st.exception(e)
         elif submitted and not user_input.strip():

@@ -1,8 +1,10 @@
 from llm_interface import Llm
+from typing import Dict
 
-def respuesta(intencion) -> dict:
+def respuesta(mensaje_procesado: Dict, informacion: str) -> Dict:
 
-    prompt = _crear_prompt_resumen(intencion.get("contenido"))
+    prompt = _crear_prompt_resumen(mensaje_procesado, informacion)
+    print("\n"+"-"*40+"\nPrompt para resumen\n"+prompt, end="\n")
     llm = Llm()
     respuesta = llm.enviar_mensaje(prompt)
 
@@ -24,34 +26,46 @@ def respuesta(intencion) -> dict:
 
     return respuesta
 
-def _crear_prompt_resumen(contenido: str) -> str:
+def _crear_prompt_resumen(mensaje_procesado: Dict, informacion: str) -> str:
 
     # Detectar el tipo de contenido y longitud
     # longitud_contenido = len(contenido)
 
     # tipo_resumen = self._determinar_tipo_resumen(longitud_contenido, intencion)
     
-    prompt = f"""Analiza el siguiente contenido y genera un resumen siguiendo estas instrucciones:
+    prompt = f"""{mensaje_procesado.get("contexto")}
 
-    CONTENIDO A RESUMIR:
-    {contenido}
+Preguntas relevantes a considerar:
+{mensaje_procesado.get("preguntas")}
 
-    FORMATO DE RESPUESTA:
-    Responde ÚNICAMENTE con un JSON en este formato:
+Hace el resumen en base a esta información:
+{informacion}
+
+Responde ÚNICAMENTE con un JSON en el siguiente formato:
+{{
+“resumen": “Un resumen **muy breve**, redactado con lenguaje claro. Los conceptos clave y más complejos deben estar conectados a notas de Obsidian (por ejemplo, usando enlaces como [[NombreConcepto]])."
+“tema": "Una frase que indique claramente el tema principal tratado en el resumen."
+"conceptos": [
     {{
-        "resumen": "tu resumen aquí",
-        "puntos_clave": ["punto 1", "punto 2", "punto 3"],
-        "longitud_resumen": "número de palabras del resumen",
-        "temas_principales": ["tema 1", "tema 2"]
+      "concepto": "Nombre del concepto clave o difícil mencionado en el resumen",
+      "desarrollo": "Explicación clara y concisa del concepto, pensada para entenderse dentro de una nota de Obsidian."
+    }},
+    {{
+      "concepto": "...",
+      "desarrollo": "..."
     }}
+    // ...más conceptos si es necesario
+  ]
+“ejemplos”: “una situación concreta, analogía o aplicación práctica que ayude a entender ese concepto”
+}}
 
-    REGLAS IMPORTANTES:
-    - Mantén la información más relevante y elimina detalles secundarios
-    - Usa un lenguaje claro y conciso
-    - Preserva el tono y contexto del contenido original
-    - No agregues información que no esté en el texto original
-    - El resumen debe ser autocontenido y comprensible sin el texto original
-    - Solo debes responder el JSON"""
+Instrucciones adicionales:
+No incluyas ningún texto adicional fuera del JSON.
+Usa \\n para representar saltos de línea dentro de strings si fuera necesario.
+Escapa las comillas dobles (") dentro del contenido.
+Asegurate de que cada concepto mencionado en el resumen esté también incluido en el array "conceptos", con su explicación correspondiente.
+El resumen debe ser breve, directo y no repetir los desarrollos ya presentes en el campo "conceptos".
+"""
 
     return prompt
 

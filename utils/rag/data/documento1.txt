@@ -1,0 +1,7 @@
+Este es un documento de ejemplo sobre inteligencia artificial.
+            La IA es una rama de la informática que se ocupa de crear sistemas
+            que pueden realizar tareas que normalmente requieren inteligencia humana.
+            
+            Los sistemas de IA pueden aprender, razonar y tomar decisiones.
+            Algunos ejemplos incluyen chatbots, sistemas de recomendación,
+            y vehículos autónomos.

@@ -1,0 +1,8 @@
+Los modelos de lenguaje como GPT son ejemplos de IA generativa.
+            Estos modelos pueden generar texto coherente y contextualmente apropiado.
+            
+            Se entrenan con grandes cantidades de texto y aprenden
+            las relaciones estadísticas entre palabras y conceptos.
+            
+            Las aplicaciones incluyen traducción, resumen de textos,
+            y asistentes conversacionales.
