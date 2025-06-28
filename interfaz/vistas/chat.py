@@ -6,12 +6,10 @@ from streamlit.components.v1 import html as components_html
 # Agregar la ruta padre al path para importar main.py
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from utils.Chats.gestionar_chat import cargar_chat, guardar_chat
-
 def render_chat():
 
     if "chat" not in st.session_state:
-        st.session_state.chat = cargar_chat(st.session_state.path_vault, st.session_state.get("materia_seleccionada"))
+        st.session_state.chat = st.session_state.agente.cargar_chat_materia(st.session_state.get("materia_seleccionada"))
 
     # Debug: Mostrar cantidad de mensajes
     st.write(f"Mensajes en el chat: {len(st.session_state.chat)}")
@@ -99,7 +97,7 @@ def render_chat():
                 # Mostrar confirmación
                 st.success("✅ Mensaje enviado!")
 
-                guardar_chat(st.session_state.chat, st.session_state.get("path_vault"), st.session_state.get("materia_seleccionada"))
+                st.session_state.agente.guardar_chat_materia(st.session_state.chat, st.session_state.get("materia_seleccionada"))
                 
                 # Esperar un poco antes de rerun para que se vea la confirmación
                 import time

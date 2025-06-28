@@ -2,11 +2,17 @@ import json
 from pathlib import Path
 import streamlit as st
 import shutil
+from typing import Dict
         
-def cargar_config_app():
+def cargar_config_app() -> Dict:
     config = cargar_arch_config()
-    st.session_state.path_vault = config["vault_path"]
-    st.session_state.materias = cargar_materias_desde_vault(st.session_state.path_vault)
+    vault_path = config["vault_path"]
+    # st.session_state.path_vault = config["vault_path"]
+    # st.session_state.materias = cargar_materias_desde_vault(st.session_state.path_vault)
+    return {
+        'path_vault': vault_path,
+        'materias': cargar_materias_desde_vault(vault_path)
+    }
 
 def establecer_config():
     ocultar_titulo()

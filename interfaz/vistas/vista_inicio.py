@@ -1,12 +1,7 @@
 import streamlit as st
 from vistas.chat import render_chat
-from utils.archivos.generar_materia import crear_archivos_materia
-from config.configuraciones import cargar_config_app
-from utils.archivos.procesador_archivos import guardar_en_vault
-from utils.Chats.gestionar_chat import cargar_chat
 
 def mostrar():
-    cargar_config_app() # establece algunas configuraciones de variables globales
 
     col1, col2 = st.columns([3, 1])
     with col1:
@@ -19,7 +14,7 @@ def mostrar():
             
         if st.button("### Chat"):
             st.session_state.materia_seleccionada = None
-            st.session_state.chat = cargar_chat(st.session_state.get("path_vault"), st.session_state.get("materia_seleccionada"))
+            st.session_state.chat = st.session_state.agente.cargar_chat_materia(st.session_state.materia_seleccionada)
             st.rerun()
         
         st.markdown("### 📚 Materias")
@@ -39,7 +34,7 @@ def mostrar():
                         st.session_state.materias = {}
 
                     if nueva_materia not in st.session_state.materias:
-                        crear_archivos_materia(st.session_state.get("path_vault"), nueva_materia)
+                        st.session_state.agente.nueva_materia(nueva_materia)
                         st.session_state.materias[nueva_materia] = {
                             "secciones": {"TPs": [], "Teoría": [], "Práctica": [], "Exámenes": []}
                         }
@@ -57,7 +52,7 @@ def mostrar():
             for nombre in st.session_state.materias:
                 if st.button(f"📘 {nombre}"):
                     st.session_state.materia_seleccionada = nombre
-                    st.session_state.chat = cargar_chat(st.session_state.path_vault, nombre)
+                    st.session_state.chat = st.session_state.agente.cargar_chat_materia(nombre)
                     st.rerun()
                 col1, col2 = st.columns([2, 4])
                 with col2:
@@ -71,10 +66,23 @@ def mostrar():
                             st.info("Sección TPs abierta")
                         if st.button("📝 Exámenes", key=f"examenes_{nombre}"):
                             st.info("Sección Exámenes abierta")
+                        
                         archivo = st.file_uploader("📂", type=["txt", "md", "pdf", "docx"])
+                        
                         if archivo:
-                            guardar_en_vault(archivo, st.session_state.path_vault, st.session_state.materia_seleccionada)
-                            archivo = None
-                            st.info("Archivo subido con éxito!!")
+                            if st.button("Guardar"):
+                                with st.spinner("Guardando archivo y actualizando base de conocimientos..."):
+                                    # Guardar archivo
+                                    try:
+                                        # Crear e iniciar el thread solo cuando se presiona el botón
+                                        thread = st.session_state.agente.guardar_archivo_en_vault(
+                                            archivo, 
+                                            st.session_state.materia_seleccionada
+                                        )
+                                        thread.join()
+                                        st.success("✅ Archivo guardado y base de conocimientos actualizándose en segundo plano!")
+                                    except Exception as e:
+                                        st.error(f"Error al guardar archivo: {e}")
         else:
             st.info("Todavía no cargaste materias.")
+

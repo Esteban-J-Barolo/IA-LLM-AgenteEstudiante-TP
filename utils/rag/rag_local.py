@@ -12,6 +12,7 @@ from langchain_community.document_loaders import (
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+from pathlib import Path
 
 class LocalRetrievalSystem:
     def __init__(self, embedding_model="all-MiniLM-L6-v2"):
@@ -50,59 +51,6 @@ class LocalRetrievalSystem:
         
         print("✅ Embeddings cargados exitosamente")
         return embeddings
-    
-    def create_sample_documents(self, data_path):
-        """
-        Crea documentos de ejemplo si no existen
-        """
-        os.makedirs(data_path, exist_ok=True)
-        
-        sample_docs = {
-            "documento1.txt": """
-            Este es un documento de ejemplo sobre inteligencia artificial.
-            La IA es una rama de la informática que se ocupa de crear sistemas
-            que pueden realizar tareas que normalmente requieren inteligencia humana.
-            
-            Los sistemas de IA pueden aprender, razonar y tomar decisiones.
-            Algunos ejemplos incluyen chatbots, sistemas de recomendación,
-            y vehículos autónomos.
-            """,
-            
-            "documento2.txt": """
-            Machine Learning es un subcampo de la inteligencia artificial.
-            Se basa en algoritmos que pueden aprender patrones de los datos
-            sin ser programados explícitamente para cada tarea específica.
-            
-            Existen tres tipos principales:
-            1. Aprendizaje supervisado
-            2. Aprendizaje no supervisado  
-            3. Aprendizaje por refuerzo
-            """,
-            
-            "documento3.txt": """
-            Los modelos de lenguaje como GPT son ejemplos de IA generativa.
-            Estos modelos pueden generar texto coherente y contextualmente apropiado.
-            
-            Se entrenan con grandes cantidades de texto y aprenden
-            las relaciones estadísticas entre palabras y conceptos.
-            
-            Las aplicaciones incluyen traducción, resumen de textos,
-            y asistentes conversacionales.
-            """
-        }
-        
-        created_files = []
-        for filename, content in sample_docs.items():
-            filepath = os.path.join(data_path, filename)
-            if not os.path.exists(filepath):
-                with open(filepath, 'w', encoding='utf-8') as f:
-                    f.write(content.strip())
-                created_files.append(filename)
-        
-        if created_files:
-            print(f"📝 Creados documentos de ejemplo: {', '.join(created_files)}")
-        
-        return len(created_files) > 0
     
     def load_documents(self, data_path, file_types=["txt", "pdf", "docx"]):
         """
@@ -147,6 +95,52 @@ class LocalRetrievalSystem:
         
         print(f"📚 Total de documentos cargados: {len(all_documents)}")
         return all_documents
+
+    def load_single_document(self, file_path: str):
+        """Carga un solo documento desde un archivo específico."""
+        try:
+            
+            file_path = Path(file_path)
+            
+            if not file_path.exists():
+                print(f"❌ Archivo no encontrado: {file_path}")
+                return []
+            
+            file_extension = file_path.suffix.lower()
+            
+            if file_extension == '.pdf':
+                loader = PyPDFLoader(str(file_path))
+            elif file_extension in ['.docx', '.doc']:
+                loader = Docx2txtLoader(str(file_path))
+            elif file_extension in ['.txt', '.md']:
+                loader = TextLoader(str(file_path), encoding='utf-8')
+            elif file_extension == '.csv':
+                loader = TextLoader(str(file_path), encoding='utf-8')
+            else:
+                print(f"⚠️ Tipo de archivo no soportado: {file_extension}")
+                return []
+                
+            return loader.load()
+            
+        except Exception as e:
+            print(f"❌ Error cargando {file_path}: {e}")
+            return []
+        
+    def add_documents_to_vectorstore(self, texts):
+        """Agrega nuevos documentos al vector store existente."""
+        try:
+            if self.vectorstore is None:
+                print("❌ Vector store no está inicializado")
+                return False
+            
+            # Agregar documentos al vector store existente
+            self.vectorstore.add_documents(texts)
+            print(f"✅ {len(texts)} documentos agregados al vector store")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Error agregando documentos al vector store: {e}")
+            return False
     
     def split_documents(self, documents, chunk_size=1000, chunk_overlap=200):
         """
@@ -316,78 +310,3 @@ class LocalRetrievalSystem:
             return info
         except Exception as e:
             return f"Error obteniendo información: {e}"
-
-# Función principal simplificada
-def main():
-    print("🚀 Iniciando Sistema de Recuperación de Documentos")
-    print("=" * 60)
-    
-    # Configuración
-    data_folder = "./data"
-    vectorstore_path = "./my_local_vectorstore"
-    
-    # Crear carpeta de datos si no existe
-    os.makedirs(data_folder, exist_ok=True)
-    
-    # Inicializar sistema de recuperación
-    retrieval_system = LocalRetrievalSystem(
-        embedding_model="sentence-transformers/all-MiniLM-L6-v2"
-    )
-    
-    # Crear o cargar vector store
-    try:
-        if not os.path.exists(vectorstore_path):
-            print("\n📁 Cargando documentos...")
-            documents = retrieval_system.load_documents(data_folder)
-            
-            if documents:
-                texts = retrieval_system.split_documents(documents)
-                retrieval_system.create_vectorstore(texts, vectorstore_path)
-            else:
-                print("❌ No se pudieron cargar documentos")
-                return
-        else:
-            print("\n📂 Cargando vector store existente...")
-            retrieval_system.load_vectorstore(vectorstore_path)
-        
-        # Mostrar información del vector store
-        info = retrieval_system.get_vectorstore_info()
-        print(f"\n📊 Información del vector store: {info}")
-        
-        # Realizar búsquedas de ejemplo
-        print("\n" + "=" * 60)
-        print("🔍 BÚSQUEDAS DE EJEMPLO")
-        print("=" * 60)
-        
-        queries = [
-            "¿Qué es la inteligencia artificial?",
-            "tipos de machine learning",
-            "modelos de lenguaje",
-            "IA generativa y aplicaciones"
-        ]
-        
-        for query in queries:
-            print(f"\n❓ Consulta: {query}")
-            print("-" * 50)
-            
-            results = retrieval_system.search_and_format(query, k=3)
-            
-            if results:
-                for result in results:
-                    print(f"\n📄 Resultado {result['rank']}:")
-                    print(f"   Fuente: {result['source']}")
-                    print(f"   Contenido: {result['content']}")
-            else:
-                print("   No se encontraron resultados relevantes")
-        
-        print("\n" + "=" * 60)
-        print("✅ Sistema de recuperación funcionando correctamente!")
-        print("💡 Ahora puedes usar este sistema para recuperar documentos relevantes")
-        print("   y procesarlos con tu propio sistema de generación de respuestas.")
-        
-    except Exception as e:
-        print(f"❌ Error general: {e}")
-        print("Verifica las dependencias y la instalación de los modelos.")
-
-# if __name__ == "__main__":
-#     main()

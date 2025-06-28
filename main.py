@@ -4,13 +4,43 @@ import re
 from typing import Dict, Optional
 from percepcion.clasificador_intencion import clasificar
 from razonamiento.generar_salidas import respuesta
-from utils.rag.iniciar_rag import iniciar_rag
+from utils.rag.iniciar_rag import iniciar_rag_con_actualizacion_incremental
 from utils.archivos.generar_nota_resumen import generar_nota_resumen
 from generacion_contenido.generar_salidas_deseadas import generar_salida_deseada
+from typing import List
+from config.configuraciones import cargar_config_app
+from utils.archivos.generar_materia import crear_archivos_materia
+from utils.archivos.procesador_archivos import guardar_en_vault
+from utils.Chats.gestionar_chat import cargar_chat
+import threading
+from utils.Chats.gestionar_chat import cargar_chat, guardar_chat
+from config.configuraciones import guardar_config, configurar_inicio_con_index
+from utils.archivos.generar_vault import crear_vault
 
 class AgenteEstudio():
     def __init__(self):
-        self.rag = iniciar_rag()
+        self.app_config = cargar_config_app()
+        self.vault_path = self.app_config['path_vault']
+        self.materias = self.app_config['materias']
+        self.iniciar_rag()
+        # self.file_manager = FileManager(vault_path)
+        # self.rag_manager = RAGManager()
+
+    def get_materias(self):
+        return self.materias
+    
+    def iniciar_rag(self):
+        self.rag = iniciar_rag_con_actualizacion_incremental(self.vault_path, self.materias)
+    
+    def actualizar_rag(self, materias_incluir: Optional[List[str]]):
+        """Actualiza el RAG para incluir archivos nuevos o modificados."""
+        try:
+            # Reinicializar para detectar cambios
+            self.rag = iniciar_rag_con_actualizacion_incremental(self.vault_path, materias_incluir)
+            return True
+        except Exception as e:
+            print(f"Error actualizando RAG: {e}")
+            return False
 
     def procesar_interaccion(self, mensaje_usuario: str, materia: str, path_vault: str) -> Dict:
 
@@ -42,6 +72,44 @@ class AgenteEstudio():
         respuesta_agente = generar_salida_deseada(resumen.get("resumen"))
 
         return respuesta_agente
+    
+    def nueva_materia(self, nombre: str):
+        crear_archivos_materia(self.vault_path, nombre)
+    
+    def guardar_archivo_en_vault(self, archivo, materia_seleccionada) -> threading.Thread:
+
+        guardar_en_vault(archivo, self.vault_path, materia_seleccionada)
+
+        thread = threading.Thread(
+            target=self._actualizar_rag_background,
+            args=(self.materias,)
+        )
+        thread.daemon = True
+        thread.start()
+
+        return thread
+    
+    def _actualizar_rag_background(self, materias):
+        """Actualiza el RAG en segundo plano."""
+        try:
+            self.actualizar_rag(materias)
+        except Exception as e:
+            print("Error al intentar actualizar el vector store: "+ str(e))
+    
+    def cargar_chat_materia(self, materia: str) -> list:
+        return cargar_chat(self.vault_path, materia)
+    
+    def guardar_chat_materia(self, chat: list, materia: str):
+        guardar_chat(chat, self.vault_path, materia)
+    
+    def guardar_nuevo_vault(self, nuevo_path: str):
+        self.app_config['vault_path'] = nuevo_path
+        self.vault_path = nuevo_path
+        guardar_config(self.app_config)
+
+        crear_vault(nuevo_path)
+
+        configurar_inicio_con_index(nuevo_path)
 
 # ---------------------------------------
 import json

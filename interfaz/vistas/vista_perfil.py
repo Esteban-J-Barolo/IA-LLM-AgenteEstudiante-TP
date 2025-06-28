@@ -4,7 +4,6 @@ from config.configuraciones import cargar_arch_config, guardar_config, configura
 from utils.archivos.generar_vault import crear_vault
 
 def mostrar():
-    arch_config = cargar_arch_config()
 
     col1, col2 = st.columns([3, 2]) # vista perfil | chat
     with col1:
@@ -19,12 +18,8 @@ def mostrar():
 
             if submit: # se supone que no hay creado nada en el path
                 try:
-                    arch_config["vault_path"] = st.session_state.path_vault
-                    guardar_config(arch_config)
-
-                    crear_vault(st.session_state.path_vault)
-
-                    configurar_inicio_con_index(st.session_state.path_vault)
+                    with st.spinner("Creando Vault nuevo..."):
+                        st.session_state.agente.guardar_nuevo_vault(st.session_state.path_vault)
 
                     st.success(f"Vault creado en: {st.session_state.path_vault}")
 
