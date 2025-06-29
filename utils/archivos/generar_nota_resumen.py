@@ -69,7 +69,12 @@ fecha: {fecha_actual}
         desarrollo = concepto["desarrollo"]
         
         nombre_archivo = concepto["concepto"]
+        # Eliminar [[ y ]]
         nombre_archivo = re.sub(r'\[\[|\]\]', '', nombre_archivo)
+        # Eliminar caracteres no válidos en Windows: < > : " | ? * /
+        nombre_archivo = re.sub(r'[<>:"|?*\\/]', '', nombre_archivo)
+         # Reemplazar espacios múltiples por uno solo
+        nombre_archivo = re.sub(r'\s+', ' ', nombre_archivo)
         nombre_archivo += ".md"
         
         # Limpiar nombre para el título

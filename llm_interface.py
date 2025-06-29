@@ -1,25 +1,16 @@
 # Clase para conectarse al LLM
 # from openai import OpenAI
 import requests
+from huggingface_hub import InferenceClient
 
 class Llm:
     def __init__(self):
         self.modelo = 'nvidia/llama-3.3-nemotron-super-49b-v1:free'
         self.temperature = 0.7
-        self.API_KEY = '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' # https://openrouter.ai/settings/keys
+        self.API_KEY = '' # https://openrouter.ai/settings/keys
         self.url = "https://openrouter.ai/api/v1/chat/completions"
-        # self.client = OpenAI(
-        #     base_url="https://openrouter.ai/api/v1",
-        #     api_key=self.API_KEY,
-        #     )
 
     def enviar_mensaje(self, prompt):
-            # response = self.client.chat.completions.create(
-            #     model=self.modelo,
-            #     messages=[{"role": "user", "content": prompt}],
-            #     temperature=self.temperature
-            # )
-            # return response.choices[0].message.content
         
         headers = {
             "Authorization": f"Bearer {self.API_KEY}",
@@ -36,6 +27,8 @@ class Llm:
         }
 
         response = requests.post(self.url, headers=headers, json=data)
+
+        print(response)
 
         if response.status_code == 200:
             return response.json()["choices"][0]["message"]["content"]
