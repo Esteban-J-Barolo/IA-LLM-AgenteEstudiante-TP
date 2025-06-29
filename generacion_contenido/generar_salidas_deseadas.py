@@ -3,9 +3,11 @@ from llm_interface import Llm
 def generar_salida_deseada(contenido: str) -> str:
 
     prompt = _gerear_prompt(contenido)
+    print("-"*40, "\nPrompt\n", prompt)
 
     llm = Llm()
     respuesta = llm.enviar_mensaje(prompt)
+    print("-"*40, "\nRespeusta agente\n", respuesta)
 
     return respuesta
 

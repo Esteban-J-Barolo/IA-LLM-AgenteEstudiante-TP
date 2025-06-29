@@ -1,7 +1,7 @@
 import os
 import re
 from datetime import datetime
-from typing import List, Dict, Union
+from typing import List, Dict
 
 def generar_nota_resumen(path_vault:str, tema: str, informacion: str, conceptos: List[Dict[str, str]], materia: str):
     """

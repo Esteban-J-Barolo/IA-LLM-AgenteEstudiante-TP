@@ -1,9 +1,8 @@
 from typing import List, Dict
 import threading
 from servicios.gestor_rag import GestorRAG
-from servicios.configuracion_app import ConfiguracionApp
+from config.configuracion_app import ConfiguracionApp
 from utils.archivos.generar_nota_resumen import generar_nota_resumen
-from config.configuraciones import guardar_config, configurar_inicio_con_index
 from utils.archivos.generar_vault import crear_vault
 from utils.archivos.generar_materia import crear_archivos_materia
 from utils.archivos.procesador_archivos import guardar_en_vault
@@ -43,7 +42,7 @@ class GestorArchivos:
 
         crear_vault(path)
 
-        configurar_inicio_con_index(path)
+        self.configuracion.configurar_inicio_con_index()
     
     def validar_estructura_vault(self):
         """Valida que el vault tenga la estructura correcta."""

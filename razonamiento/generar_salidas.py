@@ -7,6 +7,7 @@ def respuesta(mensaje_procesado: Dict, informacion: str) -> Dict:
     print("\n"+"-"*40+"\nPrompt para resumen\n"+prompt, end="\n")
     llm = Llm()
     respuesta = llm.enviar_mensaje(prompt)
+    print("-"*40, "\nRespeusta agente\n", respuesta)
 
     # if intencion.get("intencion") == 'resumen':
     #     prompt = _crear_prompt_resumen(intencion.get("contenido"))

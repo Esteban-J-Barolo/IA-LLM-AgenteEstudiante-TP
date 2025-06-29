@@ -12,7 +12,7 @@ def guardar_chat(chat: list, vault_path: str, materia: str):
             json.dump(chat, f, indent=2, ensure_ascii=False)
 
 def cargar_chat(vault_path: str, materia: str) -> list:
-    if materia:
+    if materia != 'default':
         path = Path(vault_path) / "Materias" / materia / "chat.json"
         if path.exists():
             with open(path, "r", encoding="utf-8") as f:

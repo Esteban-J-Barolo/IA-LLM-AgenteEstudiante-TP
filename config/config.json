@@ -1,3 +1,13 @@
 {
-  "vault_path": "C:\\Users\\Esteban\\Desktop\\UTN\\UTN 2025\\IA\\TP 2 IA\\pruebas"
+  "vault_path": "C:\\Users\\Esteban\\Desktop\\UTN\\UTN 2025\\IA\\TP 2 IA\\pruebas",
+  "materias": {
+    "CDD": {
+      "secciones": {
+        "TPs": [],
+        "Teoría": [],
+        "Práctica": [],
+        "Exámenes": []
+      }
+    }
+  }
 }

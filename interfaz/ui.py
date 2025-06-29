@@ -7,16 +7,17 @@ sys.path.append(str(parent_dir))
 
 import streamlit as st
 from vistas import vista_inicio, vista_perfil
-from main import AgenteEstudio
+from percepcion.percepcion_clase import Percepcion
 
 if "agente" not in st.session_state:
     with st.spinner("⏳ Cargando agente de estudio..."):
         try:
-            st.session_state.agente = AgenteEstudio()
+            st.session_state.agente = Percepcion()
             st.session_state.materias = st.session_state.agente.traer_materias()
         except Exception as e:
             st.error(f"Error al inicializar agente: {e}")
             st.session_state.agente = None
+            st.stop()
 
 st.set_page_config(layout="wide")
 st.title("Agente de estudio")

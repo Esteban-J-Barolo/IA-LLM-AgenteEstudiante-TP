@@ -4,7 +4,7 @@ from streamlit.components.v1 import html as components_html
 def render_chat():
 
     if "chat" not in st.session_state:
-        st.session_state.chat = st.session_state.agente.cargar_chat_materia(st.session_state.get("materia_seleccionada"))
+        st.session_state.chat = st.session_state.agente.cargar_chat_materia(st.session_state.get("materia_seleccionada", "default"))
 
     # Debug: Mostrar cantidad de mensajes
     st.write(f"Mensajes en el chat: {len(st.session_state.chat)}")

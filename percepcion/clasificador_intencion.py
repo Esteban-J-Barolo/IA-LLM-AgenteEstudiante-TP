@@ -71,9 +71,10 @@ def _llamar_llm(prompt: str) -> str:
     # Placeholder para la llamada a tu API de LLM
     # Reemplaza esto con tu implementación real
     # """
+    print("-"*40, "\nPrompt\n", prompt)
     llm = Llm()
     respuesta = llm.enviar_mensaje(prompt)
-    # print(respuesta)
+    print("-"*40, "\nRespeusta agente\n", respuesta)
     return respuesta
 
 def _procesar_respuesta(respuesta_llm: str, mensaje_original: str, clasificaciones_posibles: list) -> Dict:

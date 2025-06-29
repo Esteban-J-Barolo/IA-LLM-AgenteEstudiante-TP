@@ -74,7 +74,7 @@ class ValidadorRespuesta:
         
         return resumen
     
-    def _completar_campos_faltantes(resumen: Dict, campos_faltantes: list) -> Dict:
+    def _completar_campos_faltantes(self, resumen: Dict, campos_faltantes: list) -> Dict:
         """
         Completa campos faltantes con valores por defecto.
         """

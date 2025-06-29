@@ -1,15 +1,14 @@
-from servicios.configuracion_app import ConfiguracionApp
+from config.configuracion_app import ConfiguracionApp
 from servicios.gestor_archivos import GestorArchivos
 from servicios.gestor_chat import GestorChat
 from servicios.gestor_rag import GestorRAG
 from servicios.manejador_errores import ManejadorErrores
-from servicios.procesador_interaccion import ProcesadorInteraccion
+from percepcion.procesador_interaccion import ProcesadorInteraccion
 from servicios.validador_respuesta import ValidadorRespuesta
+from razonamiento.razonamiento_clase import Razonamiento
+from percepcion.clasificador_intencion import clasificar
 
-class AgenteEstudio:
-    """
-    Clase principal refactorizada usando composición.
-    """
+class Percepcion:
     
     def __init__(self):
         self.configuracion = ConfiguracionApp()
@@ -21,10 +20,26 @@ class AgenteEstudio:
         self.gestor_chat = GestorChat(self.configuracion.get_vault_path())
         self.validador = ValidadorRespuesta()
         self.procesador = ProcesadorInteraccion(self.validador, self.gestor_rag, self.gestor_archivos)
+        self.razonamiento = Razonamiento()
     
     def procesar_interaccion(self, mensaje: str, materia: str):
         """Procesa una interacción del usuario."""
-        return self.procesador.procesar(mensaje, materia, self.configuracion.get_vault_path())
+        try:
+            # Clasificar intención
+            intencion = clasificar(mensaje)
+            
+            # Buscar información
+            informacion = self.gestor_rag.buscar_informacion(intencion.get("tema"))
+            
+            # Generar respuesta
+            respuesta = self.razonamiento.generar_respuesta(intencion, informacion, materia)
+
+            return respuesta
+            
+        except Exception as e:
+            return {"error": f"Error en procesamiento: {str(e)}"}
+
+        # return self.procesador.procesar(mensaje, materia, self.configuracion.get_vault_path())
     
     def nueva_materia(self, nombre: str):
         """Crea una nueva materia."""
@@ -55,3 +70,4 @@ class AgenteEstudio:
     
     def guardar_nuevo_vault(self, nuevo_path: str):
         self.gestor_archivos.crear_vault(nuevo_path)
+        self.configuracion.establecer_config()
