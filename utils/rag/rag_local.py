@@ -7,7 +7,8 @@ from langchain_community.document_loaders import (
     TextLoader, 
     PyPDFLoader, 
     DirectoryLoader,
-    UnstructuredWordDocumentLoader
+    UnstructuredWordDocumentLoader,
+    Docx2txtLoader
 )
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -58,8 +59,7 @@ class LocalRetrievalSystem:
         """
         # Crear documentos de ejemplo si el directorio está vacío
         if not any(os.listdir(data_path)) if os.path.exists(data_path) else True:
-            print("📁 Directorio vacío, creando documentos de ejemplo...")
-            self.create_sample_documents(data_path)
+            print("📁 Directorio vacío")
         
         all_documents = []
         
