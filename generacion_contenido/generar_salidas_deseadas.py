@@ -1,13 +1,13 @@
 from llm_interface import Llm
 
-def generar_salida_deseada(contenido: str) -> str:
+def generar_salida_para_resumen(contenido: str) -> str:
 
     prompt = _gerear_prompt(contenido)
-    print("-"*40, "\nPrompt\n", prompt)
+    print("\n"+"-"*40+"\nPrompt\n"+prompt, end="\n")
 
     llm = Llm()
     respuesta = llm.enviar_mensaje(prompt)
-    print("-"*40, "\nRespeusta agente\n", respuesta)
+    print("\nRespuesta\n"+respuesta+"\n"+"-"*40, end="\n")
 
     return respuesta
 
@@ -30,6 +30,5 @@ Generá una respuesta que:
 - Sea breve si el contenido es puntual, o más desarrollada si se requiere.
 
 Recordá: No resuelvas todo directamente. Asistí, guiá y enseñá.
-
-Respuesta:"""
+"""
     return prompt

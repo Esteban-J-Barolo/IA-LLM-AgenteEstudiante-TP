@@ -1,7 +1,3 @@
-# Instalación simplificada para uso local
-# pip install langchain langchain-huggingface sentence-transformers faiss-cpu pypdf2 python-docx
-# pip install langchain-community unstructured
-
 import os
 from langchain_community.document_loaders import (
     TextLoader, 
@@ -256,7 +252,6 @@ class LocalRetrievalSystem:
         print(f"🔍 Buscando: {query}")
         
         try:
-            # docs = self.retrieve_relevant_docs(query, k)
             
             # Buscar más documentos inicialmente para filtrar por score
             docs_with_scores = self.vectorstore.similarity_search_with_score(

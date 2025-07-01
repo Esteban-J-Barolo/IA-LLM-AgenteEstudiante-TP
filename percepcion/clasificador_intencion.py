@@ -16,9 +16,10 @@ def clasificar(mensaje: str) -> Dict:
 
     # Crear el prompt estructurado
     prompt_clasificar = _crear_prompt_clasificacion(mensaje_lower, clasificaciones_posibles)
-    print("\n"+"-"*40+"\nPrompt para resumen\n"+prompt_clasificar, end="\n")
-    # Aquí llamarías a tu API de LLM
+    print("\n"+"-"*40+"\nPrompt\n"+prompt_clasificar, end="\n")
+    
     respuesta_clasificar = _llamar_llm(prompt_clasificar)
+    print("\nRespuesta\n"+respuesta_clasificar+"\n"+"-"*40, end="\n")
 
     # Procesar la respuesta y crear el diccionario
     diccionario = _procesar_respuesta(respuesta_clasificar, mensaje_lower, clasificaciones_posibles)
@@ -41,7 +42,7 @@ Responde ÚNICAMENTE con un JSON en el siguiente formato:
 {{
     “intencion": "una de las categorías listadas exactamente como aparece arriba",
     “contexto": "descripción breve (1-2 frases) del objetivo del mensaje"
-    "tema": "Una frase que indique claramente el tema principal tratado"
+    "tema": "Si 'intencion' es 'resumen', debe indicar el tema principal tratado. Si es 'ninguna', debe explicar por qué el mensaje no corresponde a un resumen.",
     "preguntas": [
         "Pregunta 1 generada por el modelo",
         "Pregunta 2 generada por el modelo",
@@ -71,10 +72,8 @@ def _llamar_llm(prompt: str) -> str:
     # Placeholder para la llamada a tu API de LLM
     # Reemplaza esto con tu implementación real
     # """
-    print("-"*40, "\nPrompt\n", prompt)
     llm = Llm()
     respuesta = llm.enviar_mensaje(prompt)
-    print("-"*40, "\nRespeusta agente\n", respuesta)
     return respuesta
 
 def _procesar_respuesta(respuesta_llm: str, mensaje_original: str, clasificaciones_posibles: list) -> Dict:

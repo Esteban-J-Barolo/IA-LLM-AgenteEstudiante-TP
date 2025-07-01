@@ -22,7 +22,3 @@ class GestorRAG:
     def buscar_informacion(self, tema: str):
         """Busca información relevante en el RAG."""
         return self.rag.search_and_format(tema)
-    
-    def actualizar_background(self, materias):
-        """Actualiza el RAG en segundo plano."""
-        pass

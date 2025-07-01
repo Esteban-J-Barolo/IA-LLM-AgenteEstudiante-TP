@@ -14,5 +14,6 @@ class Memoria:
         )
         self.gestor_archivos = GestorArchivos(self.configuracion.get_vault_path(), self.configuracion, self.gestor_rag)
 
-    def generar_las_nota(self, tema: str, resumen: str, conceptos: List[Dict[str, str]], materia: str):
-        self.gestor_archivos.generar_archivos_resumen(tema, resumen, conceptos, materia)
+    # def generar_las_nota(self, tema: str, resumen: str, conceptos: List[Dict[str, str]], materia: str):
+    def generar_las_nota(self, infromacion: Dict, materia: str):
+        self.gestor_archivos.generar_archivos_resumen(infromacion, materia)

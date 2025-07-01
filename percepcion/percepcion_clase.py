@@ -2,8 +2,6 @@ from config.configuracion_app import ConfiguracionApp
 from servicios.gestor_archivos import GestorArchivos
 from servicios.gestor_chat import GestorChat
 from servicios.gestor_rag import GestorRAG
-from servicios.manejador_errores import ManejadorErrores
-from percepcion.procesador_interaccion import ProcesadorInteraccion
 from servicios.validador_respuesta import ValidadorRespuesta
 from razonamiento.razonamiento_clase import Razonamiento
 from percepcion.clasificador_intencion import clasificar
@@ -19,7 +17,6 @@ class Percepcion:
         self.gestor_archivos = GestorArchivos(self.configuracion.get_vault_path(), self.configuracion, self.gestor_rag)
         self.gestor_chat = GestorChat(self.configuracion.get_vault_path())
         self.validador = ValidadorRespuesta()
-        self.procesador = ProcesadorInteraccion(self.validador, self.gestor_rag, self.gestor_archivos)
         self.razonamiento = Razonamiento()
     
     def procesar_interaccion(self, mensaje: str, materia: str):
@@ -29,7 +26,10 @@ class Percepcion:
             intencion = clasificar(mensaje)
             
             # Buscar información
-            informacion = self.gestor_rag.buscar_informacion(intencion.get("tema"))
+            if intencion.get('intencion') == 'resumen':
+                informacion = self.gestor_rag.buscar_informacion(intencion.get("tema"))
+            else:
+                informacion = ''
             
             # Generar respuesta
             respuesta = self.razonamiento.generar_respuesta(intencion, informacion, materia)
@@ -38,8 +38,6 @@ class Percepcion:
             
         except Exception as e:
             return {"error": f"Error en procesamiento: {str(e)}"}
-
-        # return self.procesador.procesar(mensaje, materia, self.configuracion.get_vault_path())
     
     def nueva_materia(self, nombre: str):
         """Crea una nueva materia."""

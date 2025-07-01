@@ -2,6 +2,7 @@ from generacion_contenido.generacion_contenido_clase import GenerarContenido
 from servicios.validador_respuesta import ValidadorRespuesta
 from memoria.memoria_clase import Memoria
 from razonamiento.generar_salidas import respuesta
+import json
 
 class Razonamiento:
 
@@ -15,14 +16,15 @@ class Razonamiento:
 
         respuesta_raw = respuesta(intencion, informacion)
 
-        # Validar respuesta
-        resumen = self.validador.validar_y_procesar(respuesta_raw)
+        if intencion.get('intencion') == 'resumen':
 
-        if resumen:
+            # Validar respuesta
+            resumen = self.validador.validar_y_procesar(respuesta_raw)
+
             # Generar nota
-            self.memoria.generar_las_nota(resumen.get("tema"), resumen.get("resumen"), resumen.get("conceptos"), materia)
+            self.memoria.generar_las_nota(resumen, materia)
             
             # Generar respuesta para usuario
-            return self.generar_contenido.dar_respuesta(resumen)
-        
-        return {"error": "No se pudo procesar la respuesta"}
+            return self.generar_contenido.dar_respuesta_resumen(resumen)
+        else:
+            return respuesta_raw

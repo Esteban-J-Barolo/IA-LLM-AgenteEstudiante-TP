@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import Dict
 import threading
 from servicios.gestor_rag import GestorRAG
 from config.configuracion_app import ConfiguracionApp
@@ -48,5 +48,5 @@ class GestorArchivos:
         """Valida que el vault tenga la estructura correcta."""
         pass
 
-    def generar_archivos_resumen(self, tema: str, informacion: str, conceptos: List[Dict[str, str]], materia: str):
-        generar_nota_resumen(self.vault_path, tema, informacion, conceptos, materia)
+    def generar_archivos_resumen(self, informacion: Dict, materia: str):
+        generar_nota_resumen(self.vault_path, informacion, materia)

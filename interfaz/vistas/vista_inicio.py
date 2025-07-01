@@ -1,7 +1,7 @@
 import streamlit as st
-from vistas.chat import render_chat
+from interfaz.vistas.chat import render_chat
 
-def mostrar():
+def mostrar_inicio():
 
     col1, col2 = st.columns([3, 1])
     with col1:
